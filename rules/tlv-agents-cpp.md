@@ -23,7 +23,7 @@
 
 ## Libraries
 * Prefer my own libraries
-* Logging: logfault. Use a project specifig header-file like: https://github.com/jgaa/next-app/blob/main/include/nextapp/logging.h. Start simple and add project types on demand (useful to log context information to simple log statements).
+* Logging: logfault. Use a project specifig header-file like: https://github.com/jgaa/next-app/blob/main/include/nextapp/logging.h. Start simple and add project types on demand (useful to log context information to simple log statements). For logging cli arguments, see the cli options example below. 
 * When adding external libraries, prefer to let cmake handle it. Use the default branch when fetching from git (we can lock it in version branches). If relevant, make sure that flatpak builds and offline builds can use the same cmake file. Example:
 
 ```cmake
@@ -43,7 +43,61 @@ endif()
 
 FetchContent_MakeAvailable(logfault)
 ```
+* For command line parsing in non-Qt projects, use `Boost.program_options` unless the projecr explicitely don't use Boost. Group related options. If the program uses `app command [general opts] [command-opts]` `app command -h` should show the general options and the commands special options. To enable or disable default values, use `--disable-<what>` or `--enable-<what>` in stead of options with a true/false argument. Example:
+```
+jgaa@debian:/var/local/build/next-app-Desktop-Debug$ ./bin/nextappd -h
+nextappd [options]
+Options:
+  -h [ --help ]                         Print help and exit
+  -v [ --version ]                      Print version and exit
+  -c [ --config ] arg (=/etc/nextapp/nextappd.conf)
+                                        Configuration file to use
+  -C [ --log-to-console ] arg (=info)   Log-level to the console; one of 
+                                        'info', 'debug', 'trace'. Empty string 
+                                        to disable.
+  --log-as-json-to-console              Logs to the console using json format.
+  -l [ --log-level ] arg (=info)        Log-level; one of 'info', 'debug', 
+                                        'trace'.
+  -L [ --log-file ] arg                 Log-file to write a log to. Default is 
+                                        to use only the console.
+  -T [ --truncate-log-file ]            Truncate the log-file if it already 
+                                        exists.
+  --log-as-json-to-file                 Logs to the file using json format.
+  --log-messages arg (=0)               Log data-messages to the log in Json 
+                                        format.
+                                        0=disable, 1=enable, 2=enable and 
+                                        format in readable form.
+                                        This mostly applies for debug and trace
+                                        level log-messages.
 
+Server:
+  --io-threads arg (=16)                Number of worker-threads to start for 
+                                        IO. Cannot be less than 4.
+  -g [ --grpc-address ] arg (=127.0.0.1:10321)
+                                        Address and port to use for gRPC
+  --grpc-tls-mode arg (=ca)             TLS mode; one of 'ca' or 'none'. Ca 
+                                        will use a self-signed server cert.
+  --session-timeout arg (=300)          Client-session timeout in seconds. 
+                                        Client sessions are removed after this 
+                                        period.
+  --client-versions-manifest arg        YAML manifest with the client update 
+                                        policy for this nextappd instance.
+  --plan-delete-grace-window arg (=120) Temporary extra allowance per quota 
+                                        while counts are stale after mass 
+                                        deletes.
+  --stream_batch_size arg (=250)        Number of messages to batch together in
+                                        an update stream
+  --disable-grpc-keepalive              Disable gRPC keep-alive settings. Do 
+                                        not use this is production.                                        
+...
+
+nextappd can also be started with the following arguments
+to take specific actions like a command-line utility.
+
+nextappd bootstrap          [bootstrap-options]
+nextappd create-grpc-cert   [cert-options]
+nextappd create-client-cert [cci-options]
+```
 
 ## Qt and QML (if used)
 * For QML, never use components from Qt Labs.

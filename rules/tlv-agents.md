@@ -1,0 +1,49 @@
+# General agents directions
+
+## Repository
+* If a message appears to concern another project without explicitly relating the work to this project directory, flag the likely wrong-agent message and ask which project is intended before making changes; explicitly requested cross-project work is allowed.
+* If you add files, add them to git (`git add <path>`)
+* If you rename or delete files that are under version control, use git for these operations
+* Never commit anything to git
+* If you are in doubt, ask.
+* Do not rebuild the project unless asked to do so.
+
+## Code
+* Be generous with log statement. On DEBUG level I want a good overview of what's going on in the app. On TRACE level I want all relevant info to investigate bugs. On INFO level I want any relevant information, like open ports, server address and id etc.
+
+# Github Actions
+* Filter automated builds so we don't trigger builds for unrelated commits (like updating documentation or examples)
+* By default, we only build on commits to the main branch
+
+## Engineering expectations
+
+Always act like a senior engineer with strong operational judgment, not a naive code generator.
+
+* Always evaluate security and privacy when doing changes. The goal is to have very strong security and privacy.
+* Follow established best practices by default. Do not choose shortcuts, brittle hacks, or “just make it pass” solutions when a standard robust approach exists.
+* Suppress unnecessary progress output and interactive noise in scripts and automation. Use quiet/non-interactive flags for tools like `curl`, `git`, `flatpak`, package managers, and build tools unless verbose output is explicitly needed for diagnostics.
+* Think through side effects before making changes. Do not arbitrarily change paths, file names, service names, config locations, interfaces, or behavior in ways that may break upgrades, compatibility, packaging, user expectations, or existing deployments.
+* Prefer current, maintained versions of GitHub Actions, libraries, APIs, and tools. Do not introduce deprecated functions, obsolete actions, or legacy patterns in new code.
+* When fixing problems, aim for root cause resolution, not repeated guesswork. If the same issue fails more than once, stop the shallow trial-and-error loop, reassess assumptions, inspect the real failure signals, and reason deeply before making further changes.
+* Make changes that are explicit, reversible, and easy to review. Minimize surprises.
+* When there is a well-known standard way to do something, use it.
+* When creating a release artifact for an application, include only the necessary files. No static libraries, tests, headers, SDKs, or anything else that is irrelevant to running the target binary.
+* Prefer shallow git checkouts on CI builds. Only do a full checkout if it is factually required.
+
+## MCP maintenance (when used)
+
+* MCP tool definitions, input schemas, help metadata, examples, and constraints must be reviewed and updated whenever relevant protobuf definitions, domain models, validation rules, enums, field semantics, or other constraints change. Changing an existing protobuf/API constraint requires checking all affected MCP metadata.
+* MCP documentation drifting away from the running implementation is a bug. Reuse generated protobuf metadata and shared validation/schema definitions where practical; keep detailed documentation in local MCP help rather than duplicating it in tool descriptions.
+* Normal feature work must include an MCP-impact review. Every new user-visible/domain feature must be evaluated to determine whether it should also be exposed through MCP.
+* Evaluation of MCP exposure is mandatory, but implementation is not automatic. Adding a new MCP tool or substantially extending the MCP API requires explicit project-owner approval first. Maintenance fixes that keep already-approved MCP tools, schemas, help, and validation synchronized with the implementation do not require new approval.
+
+## Protobuf and gRPC
+
+* Follow the established naming conventions in legacy projects!
+
+* protobuf Messages: `SomeName`
+* protobuf enums: `SOME_NAME`
+* protobuf variables: `someName`
+* gRPC functions: `someName({...})`
+* gRPC interfaces: `SomeName`
+

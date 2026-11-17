@@ -21,6 +21,10 @@
 * Prefer constexpr variables for constants.
 * Prefer std::view over `const char*` and other legacy C types.
 
+## State and concurrency
+* Use async coroutines where it makes sense. Prefere coroutines over other state-machines, especially where it will reduce complexity. Implement cooperating termination if the coroutine many need to be stopped from the outside. 
+* Prefere asio stackless C++20 coroutines for apps that use asio, Qt QCoro for Qt apps and standard C++20 coroutines for "clean" projects. 
+
 ## Libraries
 * Prefer my own libraries
 * Logging: logfault. Use a project specifig header-file like: https://github.com/jgaa/next-app/blob/main/include/nextapp/logging.h. Start simple and add project types on demand (useful to log context information to simple log statements). For logging cli arguments, see the cli options example below. 
